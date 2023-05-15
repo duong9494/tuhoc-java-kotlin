@@ -6,6 +6,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.ContextMenu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -34,9 +36,9 @@ class MainActivity : AppCompatActivity() {
         val btnNext = findViewById<Button>(R.id.btnNext)
         val btnPrev = findViewById<Button>(R.id.btnPrev)
         val btnLast = findViewById<Button>(R.id.btnLast)
+        val searchView = findViewById<SearchView>(R.id.searchView)
         val lvFull = findViewById<ListView>(R.id.lvFull)
         val btnViewAll = findViewById<Button>(R.id.btnViewAll)
-        val searchView = findViewById<SearchView>(R.id.searchView)
         val btnInsert = findViewById<Button>(R.id.btnInsert)
         val btnUpdate = findViewById<Button>(R.id.btnUpdate)
         val btnClear = findViewById<Button>(R.id.btnClear)
@@ -188,5 +190,29 @@ class MainActivity : AppCompatActivity() {
             })
             ad.show()
         }
+        //đăng ký sử dụng context menu cho listview lvFull
+        registerForContextMenu(lvFull)
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu?,
+        v: View?,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        menu?.add(100, 11, 1, "DELETE")
+        menu?.setHeaderTitle("Removing data")
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        val searchView = findViewById<SearchView>(R.id.searchView)
+        if (item.itemId == 11)
+        {
+            db.delete("TUHOC", "_id=?", arrayOf(rs.getString(0)))
+            rs.requery()
+            adapter.notifyDataSetChanged()
+            searchView.queryHint = "Tìm kiếm trong ${rs.count} bản ghi"
+        }
+        return super.onContextItemSelected(item)
     }
 }
