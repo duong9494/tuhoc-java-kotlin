@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         val btnInsert = findViewById<Button>(R.id.btnInsert)
         val btnUpdate = findViewById<Button>(R.id.btnUpdate)
         val btnClear = findViewById<Button>(R.id.btnClear)
+        val btnDelete = findViewById<Button>(R.id.btnDelete)
 
         //1. đưa thử dữ liệu của dòng đấu tiên trong db lên edtUser và edtEmail
        /* if (rs.moveToLast()) {
@@ -164,6 +165,28 @@ class MainActivity : AppCompatActivity() {
             edtUser.setText("")
             edtEmail.setText("")
             edtUser.requestFocus()
+        }
+        //11. code nút delete
+        btnDelete.setOnClickListener {
+            db.delete("TUHOC", "_id=?", arrayOf(rs.getString(0)))
+            rs.requery()
+            //thông báo
+            var ad = AlertDialog.Builder(this)
+            ad.setMessage("Update record")
+            ad.setMessage("Update thành công")
+            ad.setPositiveButton("OK", DialogInterface.OnClickListener{dialog, which ->
+                if (rs.moveToFirst()) {
+                    edtUser.setText("")
+                    edtEmail.setText("")
+                    edtUser.requestFocus()
+                }
+                else
+                {
+                    edtUser.setText("No data found")
+                    edtEmail.setText("No data found")
+                }
+            })
+            ad.show()
         }
     }
 }
